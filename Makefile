@@ -5,6 +5,9 @@ export SETTINGS=/etc/twatch
 
 usage:
 
+clean:
+	rm -f *.cap *.mac *.og
+
 install:
 	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
 	cp aliases.sh "$(PREFIX)$(DIR)"

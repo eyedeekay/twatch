@@ -1,5 +1,15 @@
 #! /usr/bin/env bash
 
+#! /usr/bin/env bash
+
+if [ -f /etc/twatch/global.conf ]; then
+    export CONF_FILE=/etc/twatch/global.conf
+else
+    export CONF_FILE=$(pwd)/global.conf
+fi
+
+source "$CONF_FILE"
+
 if [ -f /usr/lib/simple-curses.sh ]; then
     source /usr/lib/simple-curses.sh
 elif [ -f /usr/local/lib/simple-curses.sh ]; then

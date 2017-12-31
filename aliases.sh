@@ -11,3 +11,6 @@ if [ -f global.conf ]; then
     source global.conf
 fi
 
+source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
+
+alias assist="tshark_assist"
