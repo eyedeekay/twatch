@@ -6,7 +6,7 @@ export SETTINGS=/etc/twatch
 usage:
 
 clean:
-	rm -f *.cap *.mac *.og
+	rm -f *.cap *.deauth *.mac *.log routers.txt macs.txt
 
 install:
 	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
