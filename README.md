@@ -38,7 +38,8 @@ hostapd-wpe_cli binary.
 ### tshark tasks
 
 Presence Monitoring: Uses management frames to measure and identify nearby
-devices without them being connected to your wifi access point.
+devices without them being connected to your wifi access point. To start
+presence monitoring, run the command "wifiwatchdog"
 
 Evil Twin AP: Automatically attempt to carry out Evil Twin attacks against
 nearby wifi devices.

@@ -27,18 +27,37 @@ else
     exit 1
 fi
 
+if [ -f "$ENV_DIRECTORY/tshark/tshark-functions.sh" ]; then
+    source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
+fi
+
+scan(){
+    rm -f "stopscan"
+    while [ ! -f "stopscan" ]; do
+        approbe 1>/dev/null 2>/dev/null
+        macprobe 1>/dev/null 2>/dev/null
+        sleep 10
+    done
+    killall tshark
+    rm -f "stopscan"
+}
+
+scan &
+
 main(){
     window "wifiwatchdog" "green"
     append "wifiwatchdog is a terminal utility to monitor the local area
     for new wi-fi presences and display information about them via the 802.11
     management frames they emit." "grey"
     addsep
-    for f in *.apmac; do
-        append_file $f
+    append "Known Access Points"
+    for f in $(find out/ -name *.apmac); do
+        append_file "$f"
     done
     addsep
-    for f in *.mac; do
-        append_file $f
+    append "Known Clients and Probing AP's"
+    for f in $(find out/ -name *.mac); do
+        append_file "$f"
     done
     addsep
 }

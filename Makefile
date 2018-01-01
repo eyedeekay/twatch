@@ -10,9 +10,13 @@ export LIBS=-L$(shell pwd)/openssl-1.0.2e/
 
 usage:
 
+
+kill:
+	killall tshark
+
 clean:
-	rm -rf *.tar.gz* *.zip* *.cap* *.deauth* *.apmac* *.mac* *.log* *.err* \
-		routers.txt macs.txt hostapd-wpe-master
+	rm -rf *.tar.gz* *.zip* *.cap* *.deauth* *.apmac* *.mac* *.log* *.err* err \
+		routers.txt macs.txt hostapd-wpe-master stopscan out/*
 
 clobber: clean
 	rm -rf hostapd-2.6 hostapd-wpe
