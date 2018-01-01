@@ -45,7 +45,13 @@ aps(){
 }
 
 approbe(){
-    grep -io '[0-9a-f:]\{17\}' beacons.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
+    unique_macs=$(aps)
+    for mac in $unique_macs; do
+        echo "Probing for beacon information from $mac"
+        output_file=$(echo "$mac" | tr -d ":").apmac
+        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
+            | tee "$output_file"
+    done
 }
 
 macs(){
@@ -57,7 +63,7 @@ macprobe(){
     for mac in $unique_macs; do
         echo "Probing for beacon information from $mac"
         output_file=$(echo "$mac" | tr -d ":").mac
-        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "subtype probereq" -c 1 \
+        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
             | tee "$output_file"
     done
 }

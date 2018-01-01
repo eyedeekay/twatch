@@ -1,0 +1,3 @@
+#! /usr/bin/env sh
+bash --init-file aliases.sh -i
+

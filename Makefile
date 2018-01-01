@@ -11,7 +11,7 @@ export LIBS=-L$(shell pwd)/openssl-1.0.2e/
 usage:
 
 clean:
-	rm -rf *.tar.gz* *.zip* *.cap* *.deauth* *.mac* *.log* *.err* \
+	rm -rf *.tar.gz* *.zip* *.cap* *.deauth* *.apmac* *.mac* *.log* *.err* \
 		routers.txt macs.txt hostapd-wpe-master
 
 clobber: clean

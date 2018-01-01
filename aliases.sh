@@ -14,3 +14,11 @@ fi
 source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
 
 alias assist="tshark_assist"
+
+wifiwatchdog(){
+    aplist
+    sframes
+    approbe
+    macprobe
+    "$ENV_DIRECTORY/tshark/tshark-watch.sh"
+}
