@@ -31,31 +31,32 @@ wlan(){
 }
 
 frames(){
-    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "type mgt" -f "subtype probereq" \
-        > mgt.cap 2>tshark.log &
+    tshark -n -i "$wifi_interface" "$filter_my_mac" -f "type mgt" \
+        > mgt.cap.txt 2>tshark.frames.log &
 }
 
 aplist(){
     tshark -n -i "$wifi_interface" -f "type mgt subtype beacon" \
-        > beacons.cap 2>tshark.log &
-}
-
-aps(){
-    grep -io '[0-9a-f:]\{17\}' beacons.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
+        > beacons.cap.txt 2>tshark.aps.log &
 }
 
 macs(){
-    grep -io '[0-9a-f:]\{17\}' mgt.cap | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee macs.txt
+    grep -io '[0-9a-f:]\{17\}' mgt.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee macs.txt
+}
+
+aps(){
+    grep -io '[0-9a-f:]\{17\}' beacons.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
 }
 
 approbe(){
-    unique_macs=$(aps)
+    ap_mac=$(aps)
     mkdir -p out
-    for mac in $unique_macs; do
+    for ap in $ap_mac; do
         echo "Probing for beacon information from $mac"
-        output_file=$(echo "$mac" | tr -d ":").apmac
-        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
-            | tee "out/$output_file"
+        output_file=$(echo "$ap" | tr -d ":").apmac
+        tshark $shark_defaults -f "ether host $ap" \
+            -f "subtype beacon" -c 1 $print_frame_info 2>aps.err | sed 's|ff:ff:ff:ff:ff:ff||g' \
+            | sort -u | tee "out/$output_file"
     done
 }
 
@@ -65,8 +66,8 @@ macprobe(){
     for mac in $unique_macs; do
         echo "Probing for beacon information from $mac"
         output_file=$(echo "$mac" | tr -d ":").mac
-        tshark -n -i "$wifi_interface" -f "ether host $mac" -f "type mgt" -c 1 \
-            | tee "out/$output_file"
+        tshark $shark_defaults -f "ether host $mac" -c 1 \
+            $print_frame_info 2> macs.err | sed 's|ff:ff:ff:ff:ff:ff||g' | sort -u | tee "out/$output_file"
     done
 }
 
@@ -85,16 +86,22 @@ deauth(){
 }
 
 spot(){
-    tail -f mgt.cap
+    tail -f mgt.cap.txt
 }
 
 tshark_assist(){
-    echo "Aliases for using tshark have been loaded into your shell. They are:"
-    echo " monitor -put your card into Monitor Mode"
-    echo " client -put your card into Managed Client Mode"
-    echo " wlan -check the wireless card's mode"
-    echo " beacons -capture wireless management frams in mgt.cap"
-    echo " macs -identify unique mac addresses and list them"
-    echo " macprobe -identify and gather information about uniqe addresses"
-    echo " spot -follow mgt.cap output"
+    echo "Aliases for using tshark have been loaded into your shell. They are:
+    monitor -put your card into Monitor Mode
+    client -put your card into Managed Client Mode
+    wlan -check the wireless card's mode
+    beacons -capture wireless management frams in mgt.cap.txt
+    macs -identify unique mac addresses and list them
+    macprobe -identify and gather information about uniqe addresses
+    spot -follow mgt.cap.txt output"
+}
+
+tshark_kill(){
+    for pid in $(ps aux | grep tshark-watch | grep -v grep | awk '{print $2}'); do
+        kill "$pid";
+    done
 }

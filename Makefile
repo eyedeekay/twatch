@@ -12,17 +12,18 @@ usage:
 
 
 kill:
-	killall tshark
+	killall tshark 2>/dev/null; \
+	ps | grep tshark; true
 
 clean:
 	rm -rf *.tar.gz* *.zip* *.cap* *.deauth* *.apmac* *.mac* *.log* *.err* err \
 		routers.txt macs.txt hostapd-wpe-master stopscan out/*
 
 clobber: clean
-	rm -rf hostapd-2.6 hostapd-wpe
+	rm -rf hostapd-2.6 hostapd-wpe out.lost
 
-mrfresh: clean clobber
-	rm -rf openssl-1.0.2e
+fresh: clean clobber
+	rm -rf openssl-1.0.2e bashsimplecurses-1.2
 
 install:
 	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
@@ -37,6 +38,7 @@ install:
 	cp tshark/tshark.conf "$(PREFIX)$(DIR)/tshark"
 	cp tshark/tshark-functions.sh "$(PREFIX)$(DIR)/tshark"
 	cp tshark/tshark-watch.sh "$(PREFIX)$(DIR)/tshark"
+	cp tshark/tshark-kill.sh "$(PREFIX)$(DIR)/tshark"
 
 
 dep: bashsimplecurses-1.2.tar.gz
@@ -48,7 +50,6 @@ bashsimplecurses-1.2.tar.gz:
 
 openssl-1.0.2e:
 	wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2e.tar.gz
-	#wget https://www.openssl.org/source/old/1.1.0/openssl-1.0.2e.tar.gz
 	tar xvf openssl-1.0.2e.tar.gz
 	cd openssl-1.0.2e && \
 		./config no-shared enable-heartbeats enable-tls1 enable-tls enable-ssl3 enable-ssl
@@ -74,5 +75,8 @@ hostapd-build:
 
 hostapd: hostapd-2.6 openssl-1.0.2e hostapd-wpe hostapd-build
 
+ps:
+	ps au | grep tshark | grep -v grep
 
-
+killall: kill
+	./tshark/tshark-kill.sh

@@ -50,12 +50,12 @@ main(){
     for new wi-fi presences and display information about them via the 802.11
     management frames they emit." "grey"
     addsep
-    append "Known Access Points"
+    window "Known Access Points" "magenta"
     for f in $(find out/ -name *.apmac); do
         append_file "$f"
     done
     addsep
-    append "Known Clients and Probing AP's"
+    window "Known Clients and Probing AP's" "red"
     for f in $(find out/ -name *.mac); do
         append_file "$f"
     done

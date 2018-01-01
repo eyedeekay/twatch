@@ -1,5 +1,11 @@
 #! /usr/bin/env bash
 
+source "$HOME/.bashrc"
+#source "$HOME/.profile"
+
+PS1="$Blue\342\224\214\342\224\200\$([[ \$? != 0 ]] && echo \"[$Blue\342\234\227$Blue]\342\224\200\")[$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]root\[\033[01;33m\]@\[\033[01;96m\]\h'; else echo '\[\033[0;39m\]\u\[\033[01;33m\]@\[\033[01;96m\]\h'; fi)$Blue]\342\224\200[\[\033[0;32m\]\w$Blue]
+$Blue\342\224\224\342\224\200\342\224\200\342\225\274 \[\033[0m\]\[\e[01;33m\]\\$\[\e[0m\] $(__git_ps1 "(%s)") $Red:twatch ->$Green "
+
 export CONF_FILE=/etc/twatch/global.conf
 export ENV_DIRECTORY=/usr/lib/twatch/
 
@@ -13,7 +19,7 @@ fi
 
 source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
 
-alias assist="tshark_assist"
+alias assist="assist_vars; tshark_assist"
 
 wifiwatchdog(){
     mkdir -p out
@@ -21,3 +27,7 @@ wifiwatchdog(){
     frames
     "$ENV_DIRECTORY/tshark/tshark-watch.sh" 2>err
 }
+
+alias help="assist"
+
+alias exit="rm -rf out.last; cp -Rv out out.last; make clean; tshark_kill; exit"
