@@ -1,4 +1,9 @@
 bashsimplecurses-1.2
+hostapd-wpe
+hostapd-2.6
+openssl-1.0.2e
 *log*
 *.mac
 *.cap
+*.deauth
+
