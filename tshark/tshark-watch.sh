@@ -49,17 +49,36 @@ main(){
     append "wifiwatchdog is a terminal utility to monitor the local area
     for new wi-fi presences and display information about them via the 802.11
     management frames they emit." "grey"
+    endwin
+
     addsep
+
     window "Known Access Points" "magenta"
     for f in $(find out/ -name *.apmac); do
         append_file "$f"
     done
+    endwin
+
     addsep
+
     window "Known Clients and Probing AP's" "red"
     for f in $(find out/ -name *.mac); do
         append_file "$f"
     done
+    endwin
+
     addsep
+
+    window "Unique MAC Addresses observed" "yellow" "50%"
+    append_file out/macs.txt
+    endwin
+
+    col_right
+
+    window "MAC Addreses of nearby AP's" "cyan" "50%"
+    append_file out/routers.txt
+    endwin
+
 }
 
 main_loop 1

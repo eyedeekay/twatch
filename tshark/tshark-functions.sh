@@ -41,11 +41,11 @@ aplist(){
 }
 
 macs(){
-    grep -io '[0-9a-f:]\{17\}' mgt.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee macs.txt
+    grep -io '[0-9a-f:]\{17\}' mgt.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee out/macs.txt
 }
 
 aps(){
-    grep -io '[0-9a-f:]\{17\}' beacons.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee routers.txt
+    grep -io '[0-9a-f:]\{17\}' beacons.cap.txt | sort -u | sed 's|ff:ff:ff:ff:ff:ff||g' | tee out/routers.txt
 }
 
 approbe(){
