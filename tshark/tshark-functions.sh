@@ -56,7 +56,8 @@ approbe(){
         output_file=$(echo "$ap" | tr -d ":").apmac
         tshark $shark_defaults -f "ether host $ap" \
             -f "subtype beacon" -c 1 $print_frame_info 2>aps.err | sed 's|ff:ff:ff:ff:ff:ff||g' \
-            | sort -u | tee "out/$output_file"
+            | sort -u | tee -a "out/$output_file"
+            sort -u "out/$output_file" -o "out/$output_file"
     done
 }
 
@@ -67,7 +68,8 @@ macprobe(){
         echo "Probing for beacon information from $mac"
         output_file=$(echo "$mac" | tr -d ":").mac
         tshark $shark_defaults -f "ether host $mac" -c 1 \
-            $print_frame_info 2> macs.err | sed 's|ff:ff:ff:ff:ff:ff||g' | sort -u | tee "out/$output_file"
+            $print_frame_info 2> macs.err | sed 's|ff:ff:ff:ff:ff:ff||g' | sort -u | tee -a "out/$output_file"
+            sort -u "out/$output_file" -o "out/$output_file"
     done
 }
 
