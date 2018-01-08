@@ -27,6 +27,7 @@ fresh: clean clobber
 
 install:
 	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	cp twatch $(PREFIX)/bin
 	cp aliases.sh "$(PREFIX)$(DIR)"
 	cp global.conf "$(SETTINGS)"
 	cp bashsimplecurses-1.2/simple_curses.sh "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"

@@ -1,5 +1,21 @@
 #! /usr/bin/env bash
 
+if [ -f /etc/twatch/global.conf ]; then
+    export CONF_FILE=/etc/twatch/global.conf
+else
+    export CONF_FILE=$(pwd)/global.conf
+fi
+
+source "$CONF_FILE"
+
+if [ -f $ENV_DIRECTORY/aliases.sh ]; then
+    export ALIAS_FILE="$ENV_DIRECTORY/aliases.sh"
+elif [ -f aliases.sh ]; then
+    export ALIAS_FILE=aliases.sh
+else
+    exit
+fi
+echo "$ALIAS_FILE"
 mkdir -p out
-stterm bash --init-file aliases.sh -i
+stterm bash --init-file "$ALIAS_FILE" -i
 
