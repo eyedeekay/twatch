@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
 
 mkdir -p out
-bash --init-file aliases.sh -i
+stterm bash --init-file aliases.sh -i
 

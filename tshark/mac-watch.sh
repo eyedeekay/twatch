@@ -59,5 +59,4 @@ mac_loop(){
     done
 }
 
-#build_list
 mac_loop
