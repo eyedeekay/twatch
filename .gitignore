@@ -6,4 +6,4 @@ openssl-1.0.2e
 *.mac
 *.cap
 *.deauth
-
+out.last

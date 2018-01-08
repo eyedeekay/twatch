@@ -39,6 +39,9 @@ install:
 	cp tshark/tshark-functions.sh "$(PREFIX)$(DIR)/tshark"
 	cp tshark/tshark-watch.sh "$(PREFIX)$(DIR)/tshark"
 	cp tshark/tshark-kill.sh "$(PREFIX)$(DIR)/tshark"
+	cp tshark/hostapd-functions.sh "$(PREFIX)$(DIR)/tshark"
+	cp tshark/hostapd-watch.sh "$(PREFIX)$(DIR)/tshark"
+	cp tshark/mac-watch.sh "$(PREFIX)$(DIR)/tshark"
 
 
 dep: bashsimplecurses-1.2.tar.gz

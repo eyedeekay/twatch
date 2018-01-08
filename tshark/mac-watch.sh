@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+#! /usr/bin/env bash
+
 if [ -f /etc/twatch/global.conf ]; then
     export CONF_FILE=/etc/twatch/global.conf
 else
@@ -29,52 +31,33 @@ if [ -f "$ENV_DIRECTORY/tshark/tshark-functions.sh" ]; then
     source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
 fi
 
-scan(){
-    rm -f "stopscan"
-    while [ ! -f "stopscan" ]; do
-        approbe 1>/dev/null 2>/dev/null
-        macprobe 1>/dev/null 2>/dev/null
+tagged_mac_list(){
+    c=1
+    echo "m0" "Me:_$my_mac_address" on
+    if [ -f out/macs.txt ]; then
+        for line in $(cat out/macs.txt); do
+            echo "m$c" "$line" off
+            c=$((c+1))
+        done
+    fi
+    if [ -f out/routers.txt ]; then
+        for line in $(cat out/routers.txt); do
+            echo "m$c" "$line" off
+            c=$((c+1))
+        done
+    fi
+}
+
+build_list(){
+    dialog --timeout 10 --buildlist "Known/Unknown Devices" 0 0 0 $(tagged_mac_list)
+}
+
+mac_loop(){
+    while true; do
+        build_list
         sleep 10
     done
-    killall tshark
-    rm -f "stopscan"
 }
 
-scan &
-
-main(){
-    window "wifiwatchdog" "green"
-    append "wifiwatchdog is a terminal utility to monitor the local area
-    for new wi-fi presences and display information about them via the 802.11
-    management frames they emit." "grey"
-    endwin
-
-    addsep
-
-    window "Known Access Points" "magenta"
-    for f in $(find out/ -name *.apmac); do
-        append_file "$f"
-    done
-    endwin
-
-    addsep
-
-    window "Known Clients and Probing AP's" "red"
-    for f in $(find out/ -name *.mac); do
-        append_file "$f"
-    done
-    endwin
-
-    addsep
-
-    #window "Unique MAC Addresses observed" "yellow" "50%"
-    #append_file out/macs.txt
-    #endwin
-
-    #col_right
-
-    #addsep
-
-}
-
-main_loop 1
+#build_list
+mac_loop

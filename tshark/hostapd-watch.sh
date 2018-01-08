@@ -1,5 +1,9 @@
 #! /usr/bin/env bash
 
+#! /usr/bin/env bash
+
+#! /usr/bin/env bash
+
 if [ -f /etc/twatch/global.conf ]; then
     export CONF_FILE=/etc/twatch/global.conf
 else
@@ -29,52 +33,26 @@ if [ -f "$ENV_DIRECTORY/tshark/tshark-functions.sh" ]; then
     source "$ENV_DIRECTORY/tshark/tshark-functions.sh"
 fi
 
-scan(){
-    rm -f "stopscan"
-    while [ ! -f "stopscan" ]; do
-        approbe 1>/dev/null 2>/dev/null
-        macprobe 1>/dev/null 2>/dev/null
-        sleep 10
-    done
-    killall tshark
-    rm -f "stopscan"
-}
-
-scan &
+if [ -f "$ENV_DIRECTORY/tshark/hostapd-functions.sh" ]; then
+    source "$ENV_DIRECTORY/tshark/hostapd-functions.sh"
+fi
 
 main(){
-    window "wifiwatchdog" "green"
-    append "wifiwatchdog is a terminal utility to monitor the local area
-    for new wi-fi presences and display information about them via the 802.11
-    management frames they emit." "grey"
+    window "Flexo" "red"
+    append "Flexo is an evil twin attack monitoring tool for hostapd-wpe_cli"
     endwin
 
     addsep
 
-    window "Known Access Points" "magenta"
-    for f in $(find out/ -name *.apmac); do
-        append_file "$f"
-    done
+    window "Evil Twin Attacks in Progress" "blue" "75%"
     endwin
 
-    addsep
+    col_right
 
-    window "Known Clients and Probing AP's" "red"
-    for f in $(find out/ -name *.mac); do
-        append_file "$f"
-    done
+    window "Status" "blue" "25%"
     endwin
 
-    addsep
-
-    #window "Unique MAC Addresses observed" "yellow" "50%"
-    #append_file out/macs.txt
-    #endwin
-
-    #col_right
-
-    #addsep
-
+    move_down
 }
 
 main_loop 1
