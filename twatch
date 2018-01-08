@@ -17,5 +17,5 @@ else
 fi
 echo "$ALIAS_FILE"
 mkdir -p out
-stterm bash --init-file "$ALIAS_FILE" -i
+x-terminal-emulator -e bash --init-file "$ALIAS_FILE" -i
 

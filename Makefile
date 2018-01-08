@@ -26,7 +26,7 @@ fresh: clean clobber
 	rm -rf openssl-1.0.2e bashsimplecurses-1.2
 
 install:
-	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/" "$(SETTINGS)"
 	cp twatch $(PREFIX)/bin
 	cp aliases.sh "$(PREFIX)$(DIR)"
 	cp global.conf "$(SETTINGS)"
