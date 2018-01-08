@@ -27,22 +27,22 @@ fresh: clean clobber
 
 install:
 	mkdir -p "$(PREFIX)$(DIR)" "$(PREFIX)$(DIR)/tshark" "$(PREFIX)$(DIR)/bashsimplecurses-1.2/" "$(SETTINGS)"
-	cp twatch $(PREFIX)/bin
-	cp aliases.sh "$(PREFIX)$(DIR)"
-	cp global.conf "$(SETTINGS)"
-	cp bashsimplecurses-1.2/simple_curses.sh "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp bashsimplecurses-1.2/AUTHORS "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp bashsimplecurses-1.2/INSTALL "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp bashsimplecurses-1.2/LICENSE "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp bashsimplecurses-1.2/README "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp bashsimplecurses-1.2/Makefile "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
-	cp tshark/tshark.conf "$(PREFIX)$(DIR)/tshark"
-	cp tshark/tshark-functions.sh "$(PREFIX)$(DIR)/tshark"
-	cp tshark/tshark-watch.sh "$(PREFIX)$(DIR)/tshark"
-	cp tshark/tshark-kill.sh "$(PREFIX)$(DIR)/tshark"
-	cp tshark/hostapd-functions.sh "$(PREFIX)$(DIR)/tshark"
-	cp tshark/hostapd-watch.sh "$(PREFIX)$(DIR)/tshark"
-	cp tshark/mac-watch.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 twatch $(PREFIX)/bin
+	install -m755 aliases.sh "$(PREFIX)$(DIR)"
+	install -m644 global.conf "$(SETTINGS)"
+	install -m755 bashsimplecurses-1.2/simple_curses.sh "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m755 bashsimplecurses-1.2/AUTHORS "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m755 bashsimplecurses-1.2/INSTALL "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m755 bashsimplecurses-1.2/LICENSE "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m755 bashsimplecurses-1.2/README "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m755 bashsimplecurses-1.2/Makefile "$(PREFIX)$(DIR)/bashsimplecurses-1.2/"
+	install -m644 tshark/tshark.conf "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/tshark-functions.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/tshark-watch.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/tshark-kill.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/hostapd-functions.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/hostapd-watch.sh "$(PREFIX)$(DIR)/tshark"
+	install -m755 tshark/mac-watch.sh "$(PREFIX)$(DIR)/tshark"
 
 
 dep: bashsimplecurses-1.2.tar.gz
@@ -84,3 +84,9 @@ ps:
 
 killall: kill
 	./tshark/tshark-kill.sh
+
+deb: hostapd
+	docker rm -f twatch twatch-deb 1> /dev/null 2>/dev/null; true
+	docker build -t twatch .
+	docker run --name twatch-deb -t twatch
+	docker copy twatch-deb:/home/twatch/twatch_0.1-1_amd64.deb
